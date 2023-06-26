@@ -11,6 +11,7 @@ typedef struct {
 	ngx_uint_t method;
 	ngx_str_t base_uri;
 	ngx_str_t extra_args;
+        ngx_str_t custom_header;  // Custom header key-value pair
 	off_t range_start;
 	off_t range_end;
 	ngx_table_elt_t extra_header;
