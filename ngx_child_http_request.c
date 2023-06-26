@@ -524,6 +524,26 @@ ngx_child_request_copy_headers(
 		*output++ = params->extra_header;
 	}
 
+        custom_header->hash = 1;  // hash value for custom header
+        custom_header->key.len = params->header.len;
+        custom_header->key.data = params->header.data;
+        custom_header->value.len = 0;  // no value for custom header
+        custom_header->value.data = NULL;
+
+        // update the header pointer, if exists
+        ngx_http_header_t* hh =
+            ngx_hash_find(&cmcf->headers_in_hash, custom_header->hash,
+                          custom_header->lowcase_key, custom_header->key.len);
+        if (hh) {
+            ph = (ngx_table_elt_t**)((char*)dest + hh->offset);
+            custom_header->next = *ph;
+            *ph = custom_header;
+        }
+
+        output++;
+    }
+
+
 	// set the range if needed
 	if (params->range_start < params->range_end)
 	{
